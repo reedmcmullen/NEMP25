@@ -10,7 +10,7 @@ import numpy as np
 #Define variables and settings.
 directory_path = '/wynton/home/pollenlab/reedmcmullen/projects/NEMP25/scanpy_NEMP25'
 os.chdir(directory_path)
-save_name = "_NEMP25"
+save_name = "NEMP25"
 
 #Read in the CSV file defining the sample names and the paths to the filtered feature barcode matrices output from 10X Genomics cellranger count pipeline.
 matrices = pd.read_csv("/wynton/home/pollenlab/reedmcmullen/projects/NEMP25/scanpy_NEMP25/NEMP25_matrices_paths.csv", index_col="sample")
@@ -50,7 +50,7 @@ adata.var['ribo'] = adata.var_names.str.startswith('RPS' or 'RPL') # annotate th
 sc.pp.calculate_qc_metrics(adata, qc_vars=['mito', 'ribo'], percent_top=None, log1p=False, inplace=True)
 
 #Save initial concatenated AnnData object as a H5AD file.
-adata.layers['counts'] = adata.X.copy()
 print('Saving initial AnnData object')
+adata.layers['counts'] = adata.X.copy()
 anndata_initial = directory_path + '/NEMP25_initial.h5ad'
 adata.write(anndata_initial)
