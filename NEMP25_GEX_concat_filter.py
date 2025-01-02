@@ -44,7 +44,7 @@ sc.pp.filter_cells(adata, min_genes=100)
 sc.pp.filter_genes(adata, min_cells=10)
 
 #Annotate mitochondrial genes and ribosomal genes and calculate QC metrics for each.
-print('QC filtering by QC metrics')
+print('QC filtering of mito and ribo genes')
 adata.var['mito'] = adata.var_names.str.startswith('MT-')  # annotate the group of mitochondrial genes as 'mito'
 adata.var['ribo'] = adata.var_names.str.startswith('RPS' or 'RPL') # annotate the group of ribosomal genes as 'ribo'
 sc.pp.calculate_qc_metrics(adata, qc_vars=['mito', 'ribo'], percent_top=None, log1p=False, inplace=True)
