@@ -49,6 +49,10 @@ adata.var['mito'] = adata.var_names.str.startswith('MT-')  # annotate the group 
 adata.var['ribo'] = adata.var_names.str.startswith('RPS' or 'RPL') # annotate the group of ribosomal genes as 'ribo'
 sc.pp.calculate_qc_metrics(adata, qc_vars=['mito', 'ribo'], percent_top=None, log1p=False, inplace=True)
 
+#Visualize QC metrics with violin plots.
+plt.rcParams["figure.figsize"] = (6, 3)
+sc.pl.violin(adata, ['n_genes_by_counts', 'total_counts', 'pct_counts_mito', 'pct_counts_ribo'], multi_panel=True, stripplot = False, save=f'{save_name}_qc_metrics.png')
+
 #Save initial concatenated AnnData object as a H5AD file.
 print('Saving initial AnnData object')
 adata.layers['counts'] = adata.X.copy()
