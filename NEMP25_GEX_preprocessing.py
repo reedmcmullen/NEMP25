@@ -14,7 +14,8 @@ save_name = "NEMP25"
 
 #Load dataset.
 print('Loading the dataset...')
-anndata_initial = directory_path + '/
+anndata_initial = directory_path + '/NEMP25_initial.h5ad'
+adata = sc.read_h5ad(anndata_initial)
 
 #Normalize to median total counts and logarithmize.
 print('Normalizing and logarithmizing')
@@ -24,7 +25,7 @@ sc.pp.log1p(adata)
 #Identify and plot highly variable genes from each AnnData object as an H5AD file.
 print('Finding highly variable genes')
 sc.pp.highly_variable_genes(adata, n_top_genes=2000, batch_key="GEMwell", flavor='seurat')
-sc.pl.highly_variable_genes(adata, save=save_name+'.png')
+sc.pl.highly_variable_genes(adata, save=f'{save_name}.png')
 
 #Perform PCA dimensional reduction.
 print('Running PCA')
@@ -46,21 +47,4 @@ sc.tl.leiden(adata, flavor="igraph", n_iterations=2, resolution=res)
 #Save the AnnData object as an H5AD file.
 print('Saving preprocessed AnnData object')
 results_file_preprocessed = directory_path + '/NEMP25_preprocessed.h5ad'
-adata.write(results_file_preprocessed)
-
-#Subset the AnnData object to 10% of cells for faster DEG testing and visualization.
-print('Subsetting AnnData object')
-# Set a seed for reproducibility.
-np.random.seed(42)
-# Calculate 10% of the total number of cells
-n_cells = int(adata.n_obs * 0.1)
-# Randomly sample indices without replacement
-random_indices = np.random.choice(adata.obs.index, size=n_cells, replace=False)
-# Subset the AnnData object
-adata_subset = adata[random_indices].copy()
-adata_subset
-
-#Save the subset AnnData object.
-print('Saving subset of the preprocessed AnnData object')
-results_file_preprocessed_subset = directory_path + '/NEMP25_preprocessed_subset.h5ad'
-adata_subset.write(results_file_preprocessed_subset)
+adata.write(results_file_preprocessed, compression='gzip')
