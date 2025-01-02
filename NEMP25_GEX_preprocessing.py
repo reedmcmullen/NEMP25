@@ -46,5 +46,5 @@ sc.tl.leiden(adata, flavor="igraph", n_iterations=2, resolution=res)
 
 #Save the AnnData object as an H5AD file.
 print('Saving preprocessed AnnData object')
-results_file_preprocessed = directory_path + '/NEMP25_preprocessed.h5ad'
-adata.write(results_file_preprocessed, compression='gzip')
+anndata_preprocessed = directory_path + '/NEMP25_preprocessed.h5ad'
+adata.write(anndata_preprocessed, compression='gzip')
