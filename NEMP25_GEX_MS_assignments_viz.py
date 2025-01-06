@@ -35,4 +35,9 @@ plt.ylabel('Percent of Total Cells')
 plt.xlabel('MULTI-seq Droplet Type Assignment')
 plt.title('Overall Droplet Type Composition')
 plt.savefig(os.path.join(directory_path, 'figures',f'{save_name}_MS_droplet_type_barchart.png'), bbox_inches='tight')
-plt.show()
+
+
+
+
+
+
