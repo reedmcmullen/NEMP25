@@ -31,6 +31,7 @@ for idx, (sample_name, row) in enumerate(species_assignments_paths_df.iterrows()
 
 # Subset the species assignments metadata to only the cell barcodes observed in the adata object after preprocessing. 
 species_assignments_df=species_assignments_df.loc[species_assignments_df.index.isin(adata.obs.index),:]
+species_assignments_df.to_csv(directory_path + '/NEMP25_species_assignments_df.csv')
 
 # Add the species assignments metadata to the adata.obs dataframe.
 adata.obs.loc[species_assignments_df.index,'species']=species_assignments_df['species']
