@@ -34,6 +34,7 @@ species_assignments_df=species_assignments_df.loc[species_assignments_df.index.i
 species_assignments_df.to_csv(directory_path + '/NEMP25_species_assignments_df.csv')
 
 # Add the species assignments metadata to the adata.obs dataframe.
+print('Adding species assignment data to AnnData object and saving...')
 adata.obs.loc[species_assignments_df.index,'species']=species_assignments_df['species']
 adata.obs.loc[species_assignments_df.index,'species_droplet_type']=species_assignments_df['species_droplet_type']
 adata.obs.loc[species_assignments_df.index,'species_LLR']=species_assignments_df['species_LLR']
@@ -43,6 +44,7 @@ anndata_preprocessed = directory_path + '/NEMP25_preprocessed.h5ad'
 adata.write(anndata_preprocessed, compression='gzip')
 
 #Plotting
+print('Plotting...')
 plt.rcParams["figure.figsize"] = (6, 6)
 sc.pl.umap(adata, color='species', save=f'_{save_name}_species.png')
 sc.pl.umap(adata, color='species_droplet_type', save=f'_{save_name}_species_droplet_type.png')
