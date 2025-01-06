@@ -59,7 +59,7 @@ ax.grid(False)
 plt.ylabel('Percent of Total Cells')
 plt.xlabel('Species')
 plt.title('Species Composition')
-plt.savefig(os.path.join(directory_path, 'figures', f'{save_name}_species_assignment_barchart.png'), bbox_inches='tight')
+plt.savefig(os.path.join(directory_path, 'figures', f'{save_name}_species_barchart.png'), bbox_inches='tight')
 
 #Plot a bar plot of the species droplet type composition.
 plt.rcParams["figure.figsize"] = (5, 5)
@@ -75,22 +75,22 @@ plt.xlabel('Species Droplet Type Assignment')
 plt.title('Species Droplet Type Composition')
 plt.savefig(os.path.join(directory_path, 'figures', f'{save_name}_species_droplet_type_barchart.png'), bbox_inches='tight')
 
-#Plot a stacked barchart of the species assignments by GEMwell.
+#Plot a stacked barchart of species by GEMwell.
 species_data = adata.obs.groupby(['GEMwell', 'species']).size().unstack(fill_value=0)
 species_data =species_data.div(species_data.sum(axis=1), axis=0) * 100  # Normalize to percentages
-colors = adata.uns['species_assignment_colors']
+colors = adata.uns['species_colors']
 plt.rcParams["figure.figsize"] = (15, 5)
 ax = species_data.plot(kind='bar', stacked=True, color=colors, width=0.8)
 ax.grid(False)
 plt.ylim(top=100)
 plt.ylabel('Percent of Total Cells')
 plt.xlabel('GEM well')
-plt.title('Species Composition by GEMwell')
+plt.title('Species Composition by GEM well')
 plt.legend(title='Species', bbox_to_anchor=(1.05, 1), loc='upper left')  # Adjust legend position
 plt.tight_layout()
-plt.savefig(os.path.join(directory_path, 'figures', f'{save_name}_species_assignment_stacked_barchart_by_gemwell.png'), bbox_inches='tight')
+plt.savefig(os.path.join(directory_path, 'figures', f'{save_name}_species_stacked_barchart_by_gemwell.png'), bbox_inches='tight')
 
-#Plot a stacked barchart of the species droplet type by GEMwell.
+#Plot a stacked barchart of species droplet type by GEMwell.
 species_data = adata.obs.groupby(['GEMwell', 'species_droplet_type']).size().unstack(fill_value=0)
 species_data =species_data.div(species_data.sum(axis=1), axis=0) * 100  # Normalize to percentages
 colors = adata.uns['species_droplet_type_colors']
@@ -106,17 +106,17 @@ plt.tight_layout()
 plt.savefig(os.path.join(directory_path, 'figures', f'{save_name}_species_droplet_type_stacked_barchart_by_gemwell.png'), bbox_inches='tight')
 
 #Plot a stacked barchart of the species assignments by TimePoint.
-species_data = adata_species_singlets.obs.groupby(['TimePoint', 'species_assignment']).size().unstack(fill_value=0)
+species_data = adata_species_singlets.obs.groupby(['TimePoint', 'species']).size().unstack(fill_value=0)
 species_data =species_data.div(species_data.sum(axis=1), axis=0) * 100  # Normalize to percentages
-colors = adata.uns['species_assignment_colors']
+colors = adata.uns['species_colors']
 plt.rcParams["figure.figsize"] = (5, 5)
 ax = species_data.plot(kind='bar', stacked=True, color=colors, width=0.8)
 ax.grid(False)
 plt.ylim(top=100)
 plt.ylabel('Percent of Total Cells')
 plt.xlabel('Time Point')
-plt.title('Species Assignment Composition by Time Point')
-plt.legend(title='Species Assignment', bbox_to_anchor=(1.05, 1), loc='upper left')  # Adjust legend position
+plt.title('Species Composition by Time Point')
+plt.legend(title='Species', bbox_to_anchor=(1.05, 1), loc='upper left')  # Adjust legend position
 plt.tight_layout()
-plt.savefig(os.path.join(directory_path, 'figures', f'{save_name}_species_assignment_stacked_barchart_by_timepoint_singlets.png'), bbox_inches='tight')
+plt.savefig(os.path.join(directory_path, 'figures', f'{save_name}_species_stacked_barchart_by_timepoint.png'), bbox_inches='tight')
 
