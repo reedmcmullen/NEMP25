@@ -18,27 +18,22 @@ anndata_preprocessed = directory_path + '/NEMP25_preprocessed.h5ad'
 adata = sc.read_h5ad(anndata_preprocessed)
 
 #Add TimePoint metadata.
-adata.obs['time_point'] = adata.obs['GEM_well'].apply(lambda x: '6hr' if 1 <= x <= 4 else '54hr' if 5 <= x <= 9 else '7day')
+adata.obs['time_point'] = adata.obs['GEMwell'].apply(lambda x: '6hr' if 1 <= x <= 4 else '54hr' if 5 <= x <= 9 else '7day')
 
-#Plotting
+#Plot UMAP colored by time point.
 plt.rcParams["figure.figsize"] = (6, 6)
 sc.pl.umap(adata, color='time_point', save=f'{save_name}_time_point.png')
 
-# Set TimePoint as a categorical variable with the specified order
+# Plot bar plot of time point composition
 adata.obs['time_point'] = pd.Categorical(adata.obs['time_point'], categories=['6hr', '54hr', '7day'], ordered=True)
-
-# Get the value counts in the specified order and normalize to percentages
 data = adata.obs['time_point'].value_counts(normalize=True).reindex(['6hr', '54hr', '7day'])
 data = round(data, 3) * 100
 colors = adata.uns['time_point_colors']
-
-# Plot bar chart
 plt.rcParams["figure.figsize"] = (5, 5)
 ax = data.plot.bar(color=colors)
 for container in ax.containers:
     ax.bar_label(container)
-ax.grid(False)  # Remove gridlines
-plt.ylim(top=50)
+ax.grid(False)
 plt.ylabel('Percent of Total Cells')
 plt.xlabel('Time Point')
 plt.title('Overall Time Point Composition')
