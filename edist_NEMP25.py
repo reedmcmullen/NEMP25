@@ -31,7 +31,7 @@ pert_edist_df.to_csv(directory_path + '/pert_edist_df.csv')
 
 #Plot energy distance between perturbations.
 clustermap(pert_edist_df, robust=True, figsize=(20, 20))
-plt.savefig(os.path.join(directory_path, 'perturbation_edist_clustermap.png', bbox_inches='tight')
+plt.savefig(os.path.join(directory_path, 'perturbation_edist_clustermap.png'), bbox_inches='tight')
 
 #Calculate energy distance between groups.
 print('Calculating and plotting energy distance between groups...')
