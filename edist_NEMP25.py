@@ -1,4 +1,4 @@
-
+#! /usr/bin/env python3
 #Read in required packages and modules.
 import os
 import matplotlib.pyplot as plt
