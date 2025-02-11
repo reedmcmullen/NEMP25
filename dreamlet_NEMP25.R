@@ -2,27 +2,14 @@
 
 #Load required libraries.
 print('Loading required libraries...')
-library(data.table)
 library(SingleCellExperiment)
-library(stringr)
-library(GSEABase)
 library(dreamlet)
-library(scater)
-library(zenith)
-library(kableExtra)
-library(scattermore)
-library(cowplot)
 library(ggplot2)
-library(qvalue)
-library(tidyverse)
-library(RColorBrewer)
-library(BiocParallel)
-library(DelayedArray)
-library(reticulate)
 
 #Specify settings.
 num_cores <- as.integer(Sys.getenv("NSLOTS", "1")) #script will get the number of cores to use from NSLOTS variable if you are submitting as a job or will use 1 if not
 dir_path <- "/wynton/group/pollen/reedmcmullen/projects/NEMP25/dreamlet_NEMP25/"
+fig_path <- "/wynton/group/pollen/reedmcmullen/projects/NEMP25/dreamlet_NEMP25/figures/"
 
 #Load voom results.
 print('Loading voom results...')
@@ -34,7 +21,7 @@ res_voom <- readRDS(voom_rds_file)
 #c('LY411575', 'HX531', 'Verteporfin', 'LDN193189', 'Rapamycin', 'ATRA', 'BGJ398', 'TRULI', 'WNTC59', 'AZD8931', 'CHIR99021', 'SANT1')
 
 perty_by_timepoint_by_species_cons <- c(
-  #Vehicle perturbations
+# Vehicle perturbations
 TreMan_6hr_Human = '(groupHuman_6hr_TreMan - groupHuman_6hr_Untreated)',
 TreMan_54hr_Human = '(groupHuman_54hr_TreMan - groupHuman_54hr_Untreated)',
 TreMan_7day_Human = '(groupHuman_7day_TreMan - groupHuman_7day_Untreated)',
@@ -47,12 +34,6 @@ TreMan_7day_Chimp = '(groupChimp_7day_TreMan - groupChimp_7day_Untreated)',
 DMSO_6hr_Chimp = '(groupChimp_6hr_DMSO - groupChimp_6hr_Untreated)',
 DMSO_54hr_Chimp = '(groupChimp_54hr_DMSO - groupChimp_54hr_Untreated)',
 DMSO_7day_Chimp = '(groupChimp_7day_DMSO - groupChimp_7day_Untreated)',
-TreMan_6hr_Orangutan = '(groupOrangutan_6hr_TreMan - groupOrangutan_6hr_Untreated)',
-TreMan_54hr_Orangutan = '(groupOrangutan_54hr_TreMan - groupOrangutan_54hr_Untreated)',
-TreMan_7day_Orangutan = '(groupOrangutan_7day_TreMan - groupOrangutan_7day_Untreated)',
-DMSO_6hr_Orangutan = '(groupOrangutan_6hr_DMSO - groupOrangutan_6hr_Untreated)',
-DMSO_54hr_Orangutan = '(groupOrangutan_54hr_DMSO - groupOrangutan_54hr_Untreated)',
-DMSO_7day_Orangutan = '(groupOrangutan_7day_DMSO - groupOrangutan_7day_Untreated)',
 
 # TreMan controlled perturbations
 FGF8b_6hr_Human = '(groupHuman_6hr_FGF8b - groupHuman_6hr_TreMan)',
@@ -111,35 +92,7 @@ DLL1_6hr_Chimp = '(groupChimp_6hr_DLL1 - groupChimp_6hr_TreMan)',
 DLL1_54hr_Chimp = '(groupChimp_54hr_DLL1 - groupChimp_54hr_TreMan)',
 DLL1_7day_Chimp = '(groupChimp_7day_DLL1 - groupChimp_7day_TreMan)',
 
-FGF8b_6hr_Orangutan = '(groupOrangutan_6hr_FGF8b - groupOrangutan_6hr_TreMan)',
-FGF8b_54hr_Orangutan = '(groupOrangutan_54hr_FGF8b - groupOrangutan_54hr_TreMan)',
-FGF8b_7day_Orangutan = '(groupOrangutan_7day_FGF8b - groupOrangutan_7day_TreMan)',
-EGF_6hr_Orangutan = '(groupOrangutan_6hr_EGF - groupOrangutan_6hr_TreMan)',
-EGF_54hr_Orangutan = '(groupOrangutan_54hr_EGF - groupOrangutan_54hr_TreMan)',
-EGF_7day_Orangutan = '(groupOrangutan_7day_EGF - groupOrangutan_7day_TreMan)',
-BMP7_6hr_Orangutan = '(groupOrangutan_6hr_BMP7 - groupOrangutan_6hr_TreMan)',
-BMP7_54hr_Orangutan = '(groupOrangutan_54hr_BMP7 - groupOrangutan_54hr_TreMan)',
-BMP7_7day_Orangutan = '(groupOrangutan_7day_BMP7 - groupOrangutan_7day_TreMan)',
-IGF1LR3_6hr_Orangutan = '(groupOrangutan_6hr_IGF1LR3 - groupOrangutan_6hr_TreMan)',
-IGF1LR3_54hr_Orangutan = '(groupOrangutan_54hr_IGF1LR3 - groupOrangutan_54hr_TreMan)',
-IGF1LR3_7day_Orangutan = '(groupOrangutan_7day_IGF1 - groupOrangutan_7day_TreMan)',
-FGF2_6hr_Orangutan = '(groupOrangutan_6hr_FGF2 - groupOrangutan_6hr_TreMan)',
-FGF2_54hr_Orangutan = '(groupOrangutan_54hr_FGF2 - groupOrangutan_54hr_TreMan)',
-FGF2_7day_Orangutan = '(groupOrangutan_7day_FGF2 - groupOrangutan_7day_TreMan)',
-NRG1_6hr_Orangutan = '(groupOrangutan_6hr_NRG1 - groupOrangutan_6hr_TreMan)',
-NRG1_54hr_Orangutan = '(groupOrangutan_54hr_NRG1 - groupOrangutan_54hr_TreMan)',
-NRG1_7day_Orangutan = '(groupOrangutan_7day_NRG1 - groupOrangutan_7day_TreMan)',
-SHH_6hr_Orangutan = '(groupOrangutan_6hr_SHH - groupOrangutan_6hr_TreMan)',
-SHH_54hr_Orangutan = '(groupOrangutan_54hr_SHH - groupOrangutan_54hr_TreMan)',
-SHH_7day_Orangutan = '(groupOrangutan_7day_SHH - groupOrangutan_7day_TreMan)',
-JAG1_6hr_Orangutan = '(groupOrangutan_6hr_JAG1 - groupOrangutan_6hr_TreMan)',
-JAG1_54hr_Orangutan = '(groupOrangutan_54hr_JAG1 - groupOrangutan_54hr_TreMan)',
-JAG1_7day_Orangutan = '(groupOrangutan_7day_JAG1 - groupOrangutan_7day_TreMan)',
-DLL1_6hr_Orangutan = '(groupOrangutan_6hr_DLL1 - groupOrangutan_6hr_TreMan)',
-DLL1_54hr_Orangutan = '(groupOrangutan_54hr_DLL1 - groupOrangutan_54hr_TreMan)',
-DLL1_7day_Orangutan = '(groupOrangutan_7day_DLL1 - groupOrangutan_7day_TreMan)',
-
-#DMSO controlled perturbations
+# DMSO controlled perturbations
 LY411575_6hr_Human = '(groupHuman_6hr_LY411575 - groupHuman_6hr_DMSO)',
 LY411575_54hr_Human = '(groupHuman_54hr_LY411575 - groupHuman_54hr_DMSO)',
 LY411575_7day_Human = '(groupHuman_7day_LY411575 - groupHuman_7day_DMSO)',
@@ -212,56 +165,8 @@ CHIR99021_54hr_Chimp = '(groupChimp_54hr_CHIR99021 - groupChimp_54hr_DMSO)',
 CHIR99021_7day_Chimp = '(groupChimp_7day_CHIR99021 - groupChimp_7day_DMSO)',
 SANT1_6hr_Chimp = '(groupChimp_6hr_SANT1 - groupChimp_6hr_DMSO)',
 SANT1_54hr_Chimp = '(groupChimp_54hr_SANT1 - groupChimp_54hr_DMSO)',
-SANT1_7day_Chimp = '(groupChimp_7day_SANT1 - groupChimp_7day_DMSO)',
-
-LY411575_6hr_Orangutan = '(groupOrangutan_6hr_LY411575 - groupOrangutan_6hr_DMSO)',
-LY411575_54hr_Orangutan = '(groupOrangutan_54hr_LY411575 - groupOrangutan_54hr_DMSO)',
-LY411575_7day_Orangutan = '(groupOrangutan_7day_LY411575 - groupOrangutan_7day_DMSO)',
-HX531_6hr_Orangutan = '(groupOrangutan_6hr_HX531 - groupOrangutan_6hr_DMSO)',
-HX531_54hr_Orangutan = '(groupOrangutan_54hr_HX531 - groupOrangutan_54hr_DMSO)',
-HX531_7day_Orangutan = '(groupOrangutan_7day_HX531 - groupOrangutan_7day_DMSO)',
-Verteporfin_6hr_Orangutan = '(groupOrangutan_6hr_Verteporfin - groupOrangutan_6hr_DMSO)',
-Verteporfin_54hr_Orangutan = '(groupOrangutan_54hr_Verteporfin - groupOrangutan_54hr_DMSO)',
-Verteporfin_7day_Orangutan = '(groupOrangutan_7day_Verteporfin - groupOrangutan_7day_DMSO)',
-LDN193189_6hr_Orangutan = '(groupOrangutan_6hr_LDN193189 - groupOrangutan_6hr_DMSO)',
-LDN193189_54hr_Orangutan = '(groupOrangutan_54hr_LDN193189 - groupOrangutan_54hr_DMSO)',
-LDN193189_7day_Orangutan = '(groupOrangutan_7day_LDN193189 - groupOrangutan_7day_DMSO)',
-Rapamycin_6hr_Orangutan = '(groupOrangutan_6hr_Rapamycin - groupOrangutan_6hr_DMSO)',
-Rapamycin_54hr_Orangutan = '(groupOrangutan_54hr_Rapamycin - groupOrangutan_54hr_DMSO)',
-Rapamycin_7day_Orangutan = '(groupOrangutan_7day_Rapamycin - groupOrangutan_7day_DMSO)',
-ATRA_6hr_Orangutan = '(groupOrangutan_6hr_ATRA - groupOrangutan_6hr_DMSO)',
-ATRA_54hr_Orangutan = '(groupOrangutan_54hr_ATRA - groupOrangutan_54hr_DMSO)',
-ATRA_7day_Orangutan = '(groupOrangutan_7day_ATRA - groupOrangutan_7day_DMSO)',
-BGJ398_6hr_Orangutan = '(groupOrangutan_6hr_BGJ398 - groupOrangutan_6hr_DMSO)',
-BGJ398_54hr_Orangutan = '(groupOrangutan_54hr_BGJ398 - groupOrangutan_54hr_DMSO)',
-BGJ398_7day_Orangutan = '(groupOrangutan_7day_BGJ398 - groupOrangutan_7day_DMSO)',
-TRULI_6hr_Orangutan = '(groupOrangutan_6hr_TRULI - groupOrangutan_6hr_DMSO)',
-TRULI_54hr_Orangutan = '(groupOrangutan_54hr_TRULI - groupOrangutan_54hr_DMSO)',
-TRULI_7day_Orangutan = '(groupOrangutan_7day_TRULI - groupOrangutan_7day_DMSO)',
-WNTC59_6hr_Orangutan = '(groupOrangutan_6hr_WNTC59 - groupOrangutan_6hr_DMSO)',
-WNTC59_54hr_Orangutan = '(groupOrangutan_54hr_WNTC59 - groupOrangutan_54hr_DMSO)',
-WNTC59_7day_Orangutan = '(groupOrangutan_7day_WNTC59 - groupOrangutan_7day_DMSO)',
-AZD8931_6hr_Orangutan = '(groupOrangutan_6hr_AZD8931 - groupOrangutan_6hr_DMSO)',
-AZD8931_54hr_Orangutan = '(groupOrangutan_54hr_AZD8931 - groupOrangutan_54hr_DMSO)',
-AZD8931_7day_Orangutan = '(groupOrangutan_7day_AZD8931 - groupOrangutan_7day_DMSO)',
-CHIR99021_6hr_Orangutan = '(groupOrangutan_6hr_CHIR99021 - groupOrangutan_6hr_DMSO)',
-CHIR99021_54hr_Orangutan = '(groupOrangutan_54hr_CHIR99021 - groupOrangutan_54hr_DMSO)',
-CHIR99021_7day_Orangutan = '(groupOrangutan_7day_CHIR99021 - groupOrangutan_7day_DMSO)',
-SANT1_6hr_Orangutan = '(groupOrangutan_6hr_SANT1 - groupOrangutan_6hr_DMSO)',
-SANT1_54hr_Orangutan = '(groupOrangutan_54hr_SANT1 - groupOrangutan_54hr_DMSO)',
-SANT1_7day_Orangutan = '(groupOrangutan_7day_SANT1 - groupOrangutan_7day_DMSO)'
+SANT1_7day_Chimp = '(groupChimp_7day_SANT1 - groupChimp_7day_DMSO)'
 )
-
-#Contrasts for the average effect of a perturbation for a species across time points.
-species <- c('Human', 'Chimp', 'Orangutan')
-perturbations <- c('TreMan', 'DMSO', 'FGF8b', 'EGF', 'BMP7', 'IGF1LR3', 'FGF2', 'NRG1', 'SHH', 'JAG1', 'DLL1', 'LY411575', 'HX531', 'Verteporfin', 'LDN193189', 'Rapamycin', 'ATRA', 'BGJ398', 'TRULI', 'WNTC59', 'AZD8931', 'CHIR99021', 'SANT1')
-pert_by_species_timepointavg <- c() #Initialize an empty vector
-for (per in perturbations) { #loop through the perturbations
-  for (spec in species) { #loop through the species
-        con <- paste0(pert, "_TimePointAvg_", spec, " = paste0('(', ", pert, "_6hr_", spec, ", ' + ', ", pert, "_54hr_", spec, ", ' + ', ", pert, "_7day_", spec, ", ')/3')")
-        pert_by_species_timepointavg <- c(pert_by_species_timepointavg, con)
-    }
-  }
 
 #Contrasts for the species differences in the effect of a perturbation at a time point.
 perturbations <- c('TreMan', 'DMSO', 'FGF8b', 'EGF', 'BMP7', 'IGF1LR3', 'FGF2', 'NRG1', 'SHH', 'JAG1', 'DLL1', 'LY411575', 'HX531', 'Verteporfin', 'LDN193189', 'Rapamycin', 'ATRA', 'BGJ398', 'TRULI', 'WNTC59', 'AZD8931', 'CHIR99021', 'SANT1')
@@ -274,14 +179,8 @@ for (perturbation in perturbations) { #loop through the perturbations
   pert_by_timepoint_speciesdiff_cons <- c(pert_by_timepoint_speciesdiff_cons, con1, con2, con3)
 }
 
-#Contrast for the average species difference in the effect of a perturbation across time points.
-perturbations <- c('TreMan', 'DMSO', 'FGF8b', 'EGF', 'BMP7', 'IGF1LR3', 'FGF2', 'NRG1', 'SHH', 'JAG1', 'DLL1', 'LY411575', 'HX531', 'Verteporfin', 'LDN193189', 'Rapamycin', 'ATRA', 'BGJ398', 'TRULI', 'WNTC59', 'AZD8931', 'CHIR99021', 'SANT1')
-pert_timepointavg_speciesdiff <- c() #Initialize an empty vector.
-for (perturbation in perturbations){
-  con <- paste0(perturbation, "_TimeAvg_SpeciesDiff = paste0('(', ", perturbation, "_6hr_SpeciesDiff
-}
-
-TreMan_TimeAvg_SpeciesDiff = paste0('(', TreMan_6hr_SpeciesDiff, ' + ', TreMan_54hr_SpeciesDiff, ' + ', TreMan_7day_SpeciesDiff, ')/3')
+# Combine the contrasts.
+contrasts <- c(perty_by_timepoint_by_species_cons, pert_by_timepoint_speciesdiff_cons)
 
 
 
