@@ -15,7 +15,7 @@ data_path <- "/wynton/group/pollen/reedmcmullen/projects/NEMP25/dreamlet_NEMP25/
 res_path <- "/wynton/group/pollen/reedmcmullen/projects/NEMP25/dreamlet_NEMP25/results/"
 
 # Load the dataset
-sce = readRDS(paste0(dir_path, "NEMP25_Tel_v5_dreamlet.rds"))
+sce = readRDS(paste0(data_path, "NEMP25_Tel_v5_dreamlet.rds"))
 
 # Update SCE object to include group and sample metadata
 print('Formatting SCE object...')
