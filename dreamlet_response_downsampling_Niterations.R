@@ -12,7 +12,7 @@ library(purrr)
 num_cores <- as.integer(Sys.getenv("NSLOTS", "1"))
 dir_path <- "/wynton/group/pollen/reedmcmullen/projects/NEMP25/dreamlet_NEMP25/"
 data_path <- "/wynton/group/pollen/reedmcmullen/projects/NEMP25/dreamlet_NEMP25/objects/"
-res_path <- "/wynton/group/pollen/reedmcmullen/projects/NEMP25/dreamlet_NEMP25/results/"
+res_path <- "/wynton/group/pollen/reedmcmullen/projects/NEMP25/dreamlet_NEMP25/dreamlet_results/"
 
 # Load the dataset
 sce = readRDS(paste0(data_path, "NEMP25_Tel_v5_dreamlet.rds"))
