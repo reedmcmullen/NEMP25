@@ -88,7 +88,7 @@ for (spec in species){
 print(paste0("N response difference contrasts: ", length(responsediff_cons)))
 
 # Downsampling analysis
-n_iterations <- 500
+n_iterations <- 2
 
 # Get cell metadata
 cell_metadata <- as.data.frame(colData(sce))
@@ -100,10 +100,8 @@ for (iteration in seq_len(n_iterations)) {
   message("Running iteration ", iteration, "/", n_iterations)
 
   # Reproducible random sampling for this iteration
-  set.seed(41 + iteration)  
+  set.seed(41 + iteration)
   keep_cells <- character(0)
-
-
 
   # Loop over species
   for (species_group in unique(cell_metadata$group)) {
@@ -130,6 +128,7 @@ for (iteration in seq_len(n_iterations)) {
 
   # Create balanced SCE for this iteration
   sce_balanced <- sce[, keep_cells]
+
   # Pseudobulk data based on sample
   print('Pseudobulking...')
   pb <- aggregateToPseudoBulk(sce_balanced,
@@ -137,6 +136,7 @@ for (iteration in seq_len(n_iterations)) {
                             cluster_id="cell_class",
                             sample_id="sample",
                             verbose=TRUE)
+
   # Normalize and apply voomWithDreamWeights
   print('Running voomWithDreamWeights...')
   model_form = ~ (1|species) + (1|perturbation) + (1|time_point) + (1|individual)
@@ -167,7 +167,7 @@ for (iteration in seq_len(n_iterations)) {
     mutate(se = logFC / t) %>% # Compute standard error and add to se column.
     mutate(significant = ifelse(adj.P.Val < 0.10, TRUE, FALSE)) %>% # Add significance flag.
     mutate(logFCsign = sign(logFC)) # Add logFCsign column with sign of logFC.
-  
+
   # Store results
   all_iteration_results[[iteration]] <- results_df
 }
