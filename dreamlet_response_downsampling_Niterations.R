@@ -93,30 +93,41 @@ n_iterations <- 2
 # Get cell metadata
 cell_metadata <- as.data.frame(colData(sce))
 
-# Generate an empty list to store results
+# Define balancing groups without species
+cell_metadata$balance_group <- paste(
+  cell_metadata$perturbation,
+  cell_metadata$time_point,
+  sep = "_"
+)
+
+# Store results
 all_iteration_results <- list()
 
 for (iteration in seq_len(n_iterations)) {
+
   message("Running iteration ", iteration, "/", n_iterations)
 
-  # Reproducible random sampling for this iteration
   set.seed(41 + iteration)
   keep_cells <- character(0)
 
-  # Loop over species
-  for (species_group in unique(cell_metadata$group)) {
-    print('Downsampling...')
-    # Cells belonging to this group
-    group_cells <- rownames(cell_metadata)[cell_metadata$group == species_group]
+  # Balance Human and Chimp within each perturbation-time group
+  for (balance_group in unique(cell_metadata$balance_group)) {
 
-    # Human and Chimp cells within the group
-    chimp <- group_cells[cell_metadata[group_cells, "species"] == "Chimp"]
-    human <- group_cells[cell_metadata[group_cells, "species"] == "Human"]
+    group_cells <- rownames(cell_metadata)[
+      cell_metadata$balance_group == balance_group
+    ]
 
-    # Match to the smaller species count
+    chimp <- group_cells[
+      cell_metadata[group_cells, "species"] == "Chimp"
+    ]
+
+    human <- group_cells[
+      cell_metadata[group_cells, "species"] == "Human"
+    ]
+
+    # Match both species to the smaller cell count
     n <- min(length(chimp), length(human))
 
-    # Only sample if both species are present
     if (n > 0) {
       keep_cells <- c(
         keep_cells,
@@ -126,8 +137,24 @@ for (iteration in seq_len(n_iterations)) {
     }
   }
 
-  # Create balanced SCE for this iteration
+  # Validate the downsampling
+  if (length(keep_cells) == 0) {
+    stop("No cells selected. Check species and perturbation-time groups.")
+  }
+
+  stopifnot(all(keep_cells %in% colnames(sce)))
+
+  message("Selected ", length(keep_cells), " cells")
+
+  # Create balanced SCE
   sce_balanced <- sce[, keep_cells]
+
+  # Confirm the selected cells are present
+  print(table(
+    species = sce_balanced$species,
+    perturbation = sce_balanced$perturbation,
+    time_point = sce_balanced$time_point
+  ))
 
   # Pseudobulk data based on sample
   print('Pseudobulking...')
