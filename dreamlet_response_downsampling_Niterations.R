@@ -195,8 +195,9 @@ for (iteration in seq_len(n_iterations)) {
     mutate(significant = ifelse(adj.P.Val < 0.10, TRUE, FALSE)) %>% # Add significance flag.
     mutate(logFCsign = sign(logFC)) # Add logFCsign column with sign of logFC.
 
-  # Store results
-  all_iteration_results[[iteration]] <- results_df
+  # Store results, including iteration number
+  all_iteration_results[[iteration]] <- results_df %>%
+    mutate(iteration = iteration)
 }
 
 # Combine results into one data frame
