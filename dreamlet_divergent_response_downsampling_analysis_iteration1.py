@@ -66,8 +66,32 @@ perts <- c(treman_perts, dmso_perts)
 cntrls <- c('TreMan', 'DMSO')
 baselines <- c('Untreated', 'TreMan', 'DMSO')
 
-# Define divergent response contrasts
+# Define species differences in response difference contrasts
+speciesdiff_responsediff_cons <- c() # Initialize empty vector
+for (spec in c('Human', 'Chimp')){
+  for (time in times){
+    for (pert in cntrls){
+      con_name <- paste(pert, time, 'SpeciesDiffResponseDiff', sep='_')
+      con <- paste0("(groupHuman_", pert, "_", time, " - groupHuman_Untreated_", time, ") - ",
+                    "(groupChimp_", pert, "_", time, " - groupChimp_Untreated_", time, ")")
+      speciesdiff_responsediff_cons[con_name] <- con
+    }
+    for (pert in treman_perts){
+      con_name <- paste(pert, time, 'SpeciesDiffResponseDiff', sep='_')
+      con <- paste0("(groupHuman_", pert, "_", time, " - groupHuman_TreMan_", time, ") - ",
+                    "(groupChimp_", pert, "_", time, " - groupChimp_TreMan_", time, ")")
+      speciesdiff_responsediff_cons[con_name] <- con
+    }
+    for (pert in dmso_perts){
+      con_name <- paste(pert, time, 'SpeciesDiffResponseDiff', sep='_')
+      con <- paste0("(groupHuman_", pert, "_", time, " - groupHuman_DMSO_", time, ") - ",
+                    "(groupChimp_", pert, "_", time, " - groupChimp_DMSO_", time, ")")
+      speciesdiff_responsediff_cons[con_name] <- con
+    }
+  }
+}
 
+print(paste0("N species response difference contrasts: ", length(speciesdiff_responsediff_cons)))
 
 # Downsampling analysis
 n_iterations <- 100
