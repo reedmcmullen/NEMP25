@@ -179,7 +179,7 @@ for (iteration in seq_len(n_iterations)) {
   dreamlet_form = ~ 0 + group
   res_dreamlet = dreamlet(res_voom,
                   dreamlet_form,
-                  contrasts = responsediff_cons,
+                  contrasts = speciesdiff_responsediff_cons,
                   BPPARAM = SnowParam(num_cores, type="SOCK", progressbar=TRUE))
 
   # Format dreamlet results
