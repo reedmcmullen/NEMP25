@@ -116,13 +116,11 @@ for (iteration in seq_len(n_iterations)) {
   set.seed(41 + iteration)
   keep_cells <- character(0)
 
-    # Balance Human and Chimp within each perturbation-time group
+  # Balance Human and Chimp within each perturbation-time group
   for (balance_group in unique(cell_metadata$balance_group)) {
 
     group_cells <- rownames(cell_metadata)[cell_metadata$balance_group == balance_group]
-
     chimp <- group_cells[cell_metadata[group_cells, "species"] == "Chimp"]
-
     human <- group_cells[cell_metadata[group_cells, "species"] == "Human"]
 
     # Match both species to the smaller cell count
@@ -150,7 +148,6 @@ for (iteration in seq_len(n_iterations)) {
   sce_balanced <- sce[, keep_cells]
 
   # Confirm the selected cells are present
-  # Confirm the selected cells are present
   print(table(
     species = sce_balanced$species,
     perturbation = sce_balanced$perturbation,
@@ -163,7 +160,7 @@ for (iteration in seq_len(n_iterations)) {
                             assay="X",
                             cluster_id="cell_class",
                             sample_id="sample",
-                            verbose=TRUE)
+                            verbose=FALSE)
 
   # Normalize and apply voomWithDreamWeights
   print('Running voomWithDreamWeights...')
@@ -176,7 +173,7 @@ for (iteration in seq_len(n_iterations)) {
                          min.prop=0.00483, # Minimum proportion of retained samples with non-zero counts for a gene to be retained
                          BPPARAM=SnowParam(num_cores, type = "SOCK"),
                          quiet=FALSE)
-  # Run dreamlet
+
   # Run dreamlet
   print('Running dreamlet...')
   dreamlet_form = ~ 0 + group
@@ -208,5 +205,5 @@ all_results <- dplyr::bind_rows(all_iteration_results)
 
 # Save results
 print('Saving results...')
-saveRDS(all_results, paste0(res_path, 'dreamlet_response_downsampling_', n_iterations, 'iterations_results_df_iter1.rds'))
+saveRDS(all_results, paste0(res_path, 'dreamlet_divergent_response_downsampling_', n_iterations, 'iterations_results_df_iter1.rds'))
 print('Finished.')
